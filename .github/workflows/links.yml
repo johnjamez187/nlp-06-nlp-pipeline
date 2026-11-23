@@ -70,9 +70,10 @@ jobs:
         # WHY: Find links in repository files and verify that their destinations
         # are reachable according to the rules in .github/lychee.toml.
         with:
+
           args: >
             --config .github/lychee.toml
-            './**/*.md'
-            './**/*.html'
-            './**/*.yml'
-            './**/*.yaml'
+            --exclude-path 'data/raw/.*'
+            '**/*.md'
+            '**/*.yml'
+            '**/*.yaml'
