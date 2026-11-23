@@ -92,16 +92,20 @@ exclude_loopback = true
 # WHY: Exclude external services known to block or interfere with automated
 # link-checking requests.
 # NOTE: Values are regular expressions matched against URLs.
+
 exclude = [
-  "^https://shields\\.io", # WHY: Shields.io badges often have anti-bot measures that cause false positives
-  "^https://img\\.shields\\.io", # WHY: Shields.io image badges often have anti-bot measures that cause false positives
-  "^https://badges\\.github\\.com", # WHY: GitHub badges often have anti-bot measures that cause false positives
-  "^https://www\\.linkedin\\.com", # WHY: LinkedIn often blocks automated requests, causing false positives
-  "example\\.com",   # WHY: Exclude example domains in documentation
-  "localhost",       # WHY: Exclude local development URLs
-  "127\\.0\\.0\\.1", # WHY: Exclude local loopback
-  "\\.local",        # WHY: Exclude local network domains
+  "^https://shields\\.io",
+  "^https://img\\.shields\\.io",
+  "^https://badges\\.github\\.com",
+  "^https://www\\.linkedin\\.com",
+  "example\\.com",
+  "localhost",
+  "127\\.0\\.0\\.1",
+  "\\.local",
+  "^https://github\\.com/denisecase/nlp-06-nlp-pipeline/blob/main/src/nlp/(config|stage03_transform)\\.py$",
+  "^https://nlp\\.stanford\\.edu/projects/glove/?$",
 ]
+
 
 # === Path exclusions ===
 
