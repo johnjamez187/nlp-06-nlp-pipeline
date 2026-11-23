@@ -34,13 +34,15 @@ Purpose
   Compute frequency distributions and produce visualizations
   that surface patterns in the cleaned text.
 
+
 Analytical Questions
 
-  - Which words appear most frequently in the cleaned abstract?
-  - Does the frequency distribution look meaningful or noisy?
-  - Does the word cloud reflect the actual topic of the paper?
-  - What does the type-token ratio tell us about vocabulary richness?
-  - Would a different cleaning strategy change the results?
+  - Which words appear most frequently in the Kansas City Chiefs article?
+  - Which players, teams, and football terms dominate the coverage?
+  - Does the frequency distribution reveal meaningful patterns?
+  - Does the word cloud reflect the article's main topics?
+  - What does the type-token ratio reveal about vocabulary diversity?
+
 
 Edit your Python file to:
   - adjust the number of top tokens shown
@@ -223,23 +225,27 @@ def run_analyze(
     # Get the first (and only) row
     row = df.iloc[0]
 
+    # Extract Kansas City Chiefs article statistics
     title: str = str(row.get("title", "unknown"))
+    article_url: str = str(row.get("article_url", "unknown"))
     tokens_str: str = str(row.get("tokens", ""))
+
+    article_word_count: int = int(row.get("article_word_count", 0))
+    paragraph_count: int = int(row.get("paragraph_count", 0))
     token_count: int = int(row.get("token_count", 0))
     unique_token_count: int = int(row.get("unique_token_count", 0))
     type_token_ratio: float = float(row.get("type_token_ratio", 0.0))
-    abstract_word_count: int = int(row.get("abstract_word_count", 0))
-    author_count: int = int(row.get("author_count", 0))
 
-    # Split the space-joined token string back into a list
+    # Split cleaned text into individual words for frequency analysis
     tokens: list[str] = tokens_str.split() if tokens_str else []
 
-    LOG.info(f"  Paper: {title}")
-    LOG.info(f"  Abstract word count (raw):    {abstract_word_count}")
-    LOG.info(f"  Token count (clean):          {token_count}")
-    LOG.info(f"  Unique token count:           {unique_token_count}")
-    LOG.info(f"  Type-token ratio:             {type_token_ratio}")
-    LOG.info(f"  Author count:                 {author_count}")
+    LOG.info(f"  Chiefs article: {title}")
+    LOG.info(f"  Article URL: {article_url}")
+    LOG.info(f"  Article word count (raw): {article_word_count}")
+    LOG.info(f"  Paragraph count:          {paragraph_count}")
+    LOG.info(f"  Token count (clean):      {token_count}")
+    LOG.info(f"  Unique token count:       {unique_token_count}")
+    LOG.info(f"  Type-token ratio:         {type_token_ratio}")
 
     # ============================================================
     # Phase 4.2: Frequency distribution - bar chart
@@ -259,8 +265,8 @@ def run_analyze(
     _plot_top_tokens(
         tokens=tokens,
         top_n=top_n,
-        output_path=output_dir / "case_top_tokens.png",
-        title=f"Top {top_n} Tokens: {title}",
+        output_path=output_dir / "chiefs_top_tokens.png",
+        title=f"Kansas City Chiefs - Top {top_n} Most Frequent Words",
         LOG=LOG,
     )
 
@@ -281,8 +287,8 @@ def run_analyze(
 
     _plot_wordcloud(
         text=tokens_str,
-        output_path=output_dir / "case_wordcloud.png",
-        title=f"Word Cloud: {title}",
+        output_path=output_dir / "chiefs_wordcloud.png",
+        title="Kansas City Chiefs - Article Word Cloud",
         LOG=LOG,
     )
 

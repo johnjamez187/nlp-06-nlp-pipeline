@@ -2,8 +2,10 @@
 
 (MODIFY YOUR VERSION OF THIS FILE)
 
-Stores configuration values for the web document EVTL pipeline.
-Source: arXiv abstract page for "Agents of Chaos" (2602.20021)
+Stores configuration values for the web document EVTAL pipeline.
+Source: Kansas City Chiefs official news article.
+Article: Chiefs Defeat Chargers, 22-6, to Move to 5-0 on the Season.
+
 
 Purpose
 
@@ -26,7 +28,7 @@ from pathlib import Path
 # ============================================================
 
 # TODO: In your custom app, change the URL to work with a different page.
-PAGE_URL: str = "https://arxiv.org/abs/2602.20021"
+PAGE_URL: str = "https://www.chiefs.com/news/chiefs-defeat-chargers-22-6-to-move-to-5-0-on-the-season"
 
 # Let them know who we are (and that we're doing educational web mining).
 HTTP_REQUEST_HEADERS: dict = {
@@ -44,5 +46,5 @@ PROCESSED_PATH: Path = DATA_PATH / "processed"
 
 # TODO: In your custom app, change the output file names from case_
 # to something that represents YOUR custom project.
-RAW_HTML_PATH: Path = RAW_PATH / "case_raw.html"
-PROCESSED_CSV_PATH: Path = PROCESSED_PATH / "case_processed.csv"
+RAW_HTML_PATH: Path = RAW_PATH / "chiefs_raw.html"
+PROCESSED_CSV_PATH: Path = PROCESSED_PATH / "chiefs_processed.csv"

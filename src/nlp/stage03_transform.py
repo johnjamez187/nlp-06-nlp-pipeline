@@ -162,10 +162,13 @@ def _clean_text(text: str, nlp_model: spacy.language.Language) -> str:
     # Hyphenated terms like red-teaming are split by spaCy into red, -, teaming,
     # and the hyphen is then dropped, so no fused tokens are produced.
     doc = nlp_model(text)
+
     text = " ".join(
         token.text
         for token in doc
         if not (token.is_stop or token.is_punct or token.is_space)
+        and token.is_ascii
+        and token.text.isalnum()
     )
 
     return text
@@ -198,13 +201,11 @@ def run_transform(
         "We must manually inspect the HTML structure to identify the fields we want to extract."
     )
     LOG.info(
-        "For this arXiv page, we can extract:"
-        "\n- Title from <h1 class='title'>"
-        "\n- Authors from <div class='authors'>"
-        "\n- Abstract from <blockquote class='abstract'>"
-        "\n- Primary subject from <div class='subheader'>"
-        "\n- Submission date from <div class='dateline'>"
-        "\n- ArXiv ID from canonical link"
+        "For this Kansas City Chiefs news article, we can extract:"
+        "\n- Article headline from <h1>"
+        "\n- Article text from paragraphs inside <article>"
+        "\n- Article URL from the canonical link"
+        "\n- Word counts and NLP statistics from the article text"
     )
     LOG.info("Replace any missing content with `unknown` to ensure all are strings.")
 
@@ -224,171 +225,125 @@ def run_transform(
     LOG.info("Project specific: Extract title, authors, abstract")
     LOG.info("------------------------")
 
-    title_tag: Tag | None = soup.find("h1", class_="title")
-    title: str = _get_text(title_tag, strip_prefix="Title:")
-    LOG.info(f"Extracted title: {title}")
+    # ============================================================
+    # Kansas City Chiefs News Article Extraction
+    # Author: John James
+    # Date: 2026-11
+    # ============================================================
 
-    authors_tag: Tag | None = soup.find("div", class_="authors")
+    # Extract the headline from the main article
+    article_tag: Tag | None = soup.find("article")
+    title_tag: Tag | None = article_tag.find("h1") if article_tag else None
 
-    # Extract individual author tags from the authors div
-    # If there are no author tags, the authors list will be empty.
-    author_tags_list: list[Tag] = authors_tag.find_all("a") if authors_tag else []
+    title: str = _get_text(title_tag)
+    LOG.info(f"Extracted headline: {title}")
 
-    # Join the individual author names into a single string, separated by commas.
-    # If the authors list is empty, default to "unknown".
-    authors: str = (
-        ", ".join([tag.get_text(strip=True) for tag in author_tags_list])
-        .replace("Authors:", "")
-        .strip()
-    ) or "unknown"
+    # Extract the main article content
+    article_tag: Tag | None = soup.find("article")
+    paragraph_tags = article_tag.find_all("p") if article_tag else []
 
-    LOG.info(f"Extracted authors: {authors}")
+    # Combine all article paragraphs into one text document
+    article_raw: str = " ".join(
+        paragraph.get_text(" ", strip=True) for paragraph in paragraph_tags
+    )
 
-    abstract_tag: Tag | None = soup.find("blockquote", class_="abstract")
-    abstract_raw: str = _get_text(abstract_tag, strip_prefix="Abstract:")
-    LOG.info(f"Extracted abstract: {abstract_raw[:100]}...")
+    LOG.info(f"Extracted article text: {article_raw[:150]}...")
+    LOG.info(f"Extracted paragraph count: {len(paragraph_tags)}")
 
-    LOG.info("------------------------")
-    LOG.info("Project specific: Extract subjects from subheader")
-    LOG.info("------------------------")
+    # Extract the article's canonical URL
+    canonical_tag = soup.find("link", rel="canonical")
 
-    # Primary subject from <div class="subheader">
-    subheader: Tag | None = soup.find("div", class_="subheader")
+    article_url: str = (
+        str(canonical_tag.get("href", "unknown")) if canonical_tag else "unknown"
+    )
 
-    # Subjects may be in the format "Subjects: cs.AI (primary); cs.LG; stat.ML"
-    subjects: str = _get_text(subheader, strip_prefix="Subjects:")
-    LOG.info(f"Extracted subjects: {subjects}")
-
-    LOG.info("------------------------")
-    LOG.info("Project specific: Extract submission date from dateline")
-    LOG.info("------------------------")
-
-    # Submission date from <div class="dateline">
-    dateline: Tag | None = soup.find("div", class_="dateline")
-    date_submitted_str: str = _get_text(dateline)
-    LOG.info(f"Extracted submission date: {date_submitted_str}")
-
-    LOG.info("------------------------")
-    LOG.info("Project specific: Extract arxiv_id from canonical link")
-    LOG.info("------------------------")
-
-    # The canonical link looks like this in the HTML <head>:
-    #   <link rel="canonical" href="https://arxiv.org/abs/2602.20021"/>"
-    canonical: Tag | None = soup.find("link", rel="canonical")
-
-    if canonical is None:
-        LOG.warning("Canonical link not found, setting arXiv ID to 'unknown'")
-        arxiv_id: str = "unknown"
-    else:
-        href: str = str(canonical["href"])
-        arxiv_id: str = href.split("/abs/")[-1]
-
-    LOG.info(f"Extracted arxiv_id: {arxiv_id}")
+    LOG.info(f"Extracted article URL: {article_url}")
 
     LOG.info("========================")
     LOG.info("PHASE 3.2: Clean and normalize text fields")
     LOG.info("========================")
-    # This phase cleans the raw abstract text.
-    # The _clean_text() helper documents each cleaning decision and
-    # its tradeoffs. Read it before modifying.
 
-    LOG.info("Inspect: compare abstract_raw to abstract_clean in the log.")
+    # Clean the Kansas City Chiefs article text.
+    # Remove stopwords, punctuation, and unnecessary whitespace
+    # while preserving meaningful football-related vocabulary.
+
+    LOG.info("Inspect: compare article_raw to article_clean in the log.")
     LOG.info("Did we remove anything we should have kept?")
     LOG.info("Is there still noise that cleaning missed?")
     LOG.info("========================")
 
-    abstract_clean: str = (
-        _clean_text(abstract_raw, nlp) if abstract_raw != "unknown" else "unknown"
-    )
+    article_clean: str = _clean_text(article_raw, nlp) if article_raw else ""
 
-    # Log before and after to make the cleaning effect visible
-    LOG.info(f"  abstract (raw):   {abstract_raw[:120]}...")
-    LOG.info(f"  abstract (clean): {abstract_clean[:120]}...")
+    # Log before and after to inspect the cleaning results
+    LOG.info(f"  article (raw):   {article_raw[:120]}...")
+    LOG.info(f"  article (clean): {article_clean[:120]}...")
     LOG.info(
-        f"  characters removed: {len(abstract_raw) - len(abstract_clean)} "
-        f"({100 * (1 - len(abstract_clean) / max(len(abstract_raw), 1)):.1f}%)"
+        f"  characters removed: {len(article_raw) - len(article_clean)} "
+        f"({100 * (1 - len(article_clean) / max(len(article_raw), 1)):.1f}%)"
     )
 
     LOG.info("========================")
     LOG.info("PHASE 3.3: Engineer derived features")
     LOG.info("========================")
-    # This phase adds derived fields that support NLP analysis.
-    # These fields do not exist in the source HTML:
-    # they are computed from the cleaned text.
+
+    # Engineer features for Kansas City Chiefs news analysis.
+    # Author: John James
+    # Date: 2026-11
     #
-    # Derived features added here:
-    #
-    # abstract_word_count: number of words in the raw abstract.
-    #   WHY: Consistent with Module 5; allows comparison across modules.
-    #
-    # tokens: list of individual words in the cleaned abstract.
-    #   WHY: Tokenization is the foundation of all NLP analysis.
-    #
-    # token_count: number of tokens after cleaning and stopword removal.
-    #   WHY: Useful for comparing document length across papers.
-    #
-    # unique_token_count: number of distinct tokens.
-    #   WHY: Combined with token_count gives vocabulary richness.
-    #
-    # type_token_ratio: unique_tokens / total_tokens.
-    #   WHY: Measures vocabulary richness (diversity of words used).
-    #   A ratio close to 1.0 means almost every word is unique.
-    #   A ratio close to 0.0 means many words are repeated.
-    #
-    # author_count: number of authors.
-    #   WHY: Consistent with Module 5; allows comparison.
-    #
+    # article_word_count: words in the original article.
+    # token_count: words remaining after NLP cleaning.
+    # unique_token_count: number of distinct cleaned words.
+    # type_token_ratio: vocabulary diversity.
+    # paragraph_count: number of paragraphs in the article.
+
     LOG.info("Inspect: do these derived fields look meaningful?")
     LOG.info("Would any additional features help the analysis?")
     LOG.info("========================")
 
-    # Calculate derived field: abstract word count
-    abstract_raw_word_count: int = (
-        len(abstract_raw.split()) if abstract_raw != "unknown" else 0
-    )
-    LOG.info(f"  abstract_word_count: {abstract_raw_word_count}")
+    # Count words in the original article
+    article_word_count: int = len(article_raw.split())
+    LOG.info(f"  article_word_count: {article_word_count}")
 
-    # Calculate derived field: author count
-    author_count: int = (
-        len([a.strip() for a in authors.split(",")]) if authors != "unknown" else 0
-    )
-    LOG.info(f"  author_count:        {author_count}")
+    # Count article paragraphs
+    paragraph_count: int = len(paragraph_tags)
+    LOG.info(f"  paragraph_count:    {paragraph_count}")
 
-    # Tokenize the cleaned abstract
-    tokens: list[str] = abstract_clean.split() if abstract_clean != "unknown" else []
+    # Tokenize the cleaned article text
+    tokens: list[str] = article_clean.split()
     token_count: int = len(tokens)
-    LOG.info(f"  token_count:         {token_count}")
+    LOG.info(f"  token_count:        {token_count}")
 
+    # Count unique cleaned tokens
     unique_token_count: int = len(set(tokens))
-    LOG.info(f"  unique_token_count:  {unique_token_count}")
+    LOG.info(f"  unique_token_count: {unique_token_count}")
 
-    # Type-token ratio: vocabulary richness
+    # Calculate vocabulary diversity
     type_token_ratio: float = (
         round(unique_token_count / token_count, 4) if token_count > 0 else 0.0
     )
-    LOG.info(f"  type_token_ratio:    {type_token_ratio}")
-    LOG.info(f"  first 10 tokens:     {tokens[:10]}")
+
+    LOG.info(f"  type_token_ratio:   {type_token_ratio}")
+    LOG.info(f"  first 10 tokens:    {tokens[:10]}")
 
     LOG.info("========================")
     LOG.info("PHASE 3.4: Build record and create DataFrame")
     LOG.info("========================")
 
+    # Build the Kansas City Chiefs article dataset
     record = {
-        "arxiv_id": arxiv_id,
+        "article_url": article_url,
         "title": title,
-        "authors": authors,
-        "subjects": subjects,
-        "submitted": date_submitted_str,
-        "abstract_raw": abstract_raw,
-        "abstract_clean": abstract_clean,
+        "article_raw": article_raw,
+        "article_clean": article_clean,
         "tokens": " ".join(tokens),
-        "abstract_word_count": abstract_raw_word_count,
+        "article_word_count": article_word_count,
+        "paragraph_count": paragraph_count,
         "token_count": token_count,
         "unique_token_count": unique_token_count,
         "type_token_ratio": type_token_ratio,
-        "author_count": author_count,
     }
 
+    # Create the Pandas DataFrame
     df = pd.DataFrame([record])
 
     LOG.info(f"Created DataFrame with {len(df)} row and {len(df.columns)} columns")
@@ -396,16 +351,24 @@ def run_transform(
 
     LOG.info("DataFrame Details")
     LOG.info(f"  Title: {title}")
-    LOG.info(f"  Author count: {record['author_count']}")
-    LOG.info(f"  Abstract word count: {record['abstract_word_count']}")
+    LOG.info(f"  Article URL: {article_url}")
+    LOG.info(f"  Article word count: {record['article_word_count']}")
+    LOG.info(f"  Paragraph count: {record['paragraph_count']}")
     LOG.info(f"  Token count (clean): {record['token_count']}")
+    LOG.info(f"  Unique token count: {record['unique_token_count']}")
     LOG.info(f"  Type-token ratio: {record['type_token_ratio']}")
+
     LOG.info(
-        f"  DF preview:\n{
-            df[
-                ['arxiv_id', 'title', 'token_count', 'type_token_ratio', 'author_count']
-            ].head()
-        }"
+        "  DF preview:\n%s",
+        df[
+            [
+                "title",
+                "article_word_count",
+                "paragraph_count",
+                "token_count",
+                "type_token_ratio",
+            ]
+        ].head(),
     )
 
     LOG.info("Sink: Pandas DataFrame created")
