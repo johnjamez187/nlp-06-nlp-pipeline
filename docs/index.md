@@ -1,125 +1,104 @@
+
 # Web Mining and Applied NLP Project Report
 
-Web Mining and Applied NLP | Project 06 | Example Report
+**John James | Project 06 | Kansas City Chiefs NLP Analysis**
 
 ## Overview
 
-This project introduces a complete
-natural language processing pipeline
-for analyzing text extracted from web documents.
+This project demonstrates a complete natural language processing
+(NLP) pipeline using a Kansas City Chiefs football article.
 
-The objective is to acquire HTML,
-validate document structure,
-extract and clean text,
-engineer NLP features,
-analyze vocabulary patterns,
-and persist the results.
+The objective is to retrieve web content, validate the HTML,
+extract and clean text, analyze vocabulary patterns,
+and save the results.
 
-The project extends the earlier EVTL architecture
-by introducing an explicit Analyze stage.
-
-The resulting architecture is
-Extract, Validate, Transform, Analyze, Load (EVTAL).
+The project uses the Extract, Validate, Transform, Analyze,
+Load (EVTAL) architecture.
 
 ## Tools and Methods
 
 The project uses:
 
-- Python for pipeline orchestration and processing.
+- Python for pipeline orchestration.
 - Requests for retrieving HTML documents.
-- BeautifulSoup for parsing and extracting HTML content.
-- spaCy for tokenization and linguistic text processing.
-- Pandas for structured data transformation.
-- Token counts and type-token ratios for describing vocabulary.
+- BeautifulSoup for parsing HTML content.
+- spaCy for text preprocessing and tokenization.
+- Pandas for structured data processing.
 - Matplotlib for token frequency visualizations.
-- WordCloud for visual exploration of vocabulary.
-- CSV for persistent output.
-- Logging for execution records.
+- WordCloud for visual vocabulary analysis.
+- CSV for saving processed data.
 - Ruff, ty, and pytest for code verification.
-- Zensical and GitHub Pages for published documentation.
+- Zensical and GitHub Pages for documentation.
 
-The example retrieves an academic paper's
-abstract page from arXiv.
+### Data Source
 
-The pipeline implements five stages:
+The analysis uses a Kansas City Chiefs article:
 
-- **Extract** - retrieve HTML and preserve the raw document.
-- **Validate** - verify the expected HTML structure.
-- **Transform** - extract metadata, clean text, and engineer NLP features.
-- **Analyze** - compute token frequencies and create visualizations.
-- **Load** - save the processed dataset to a CSV file.
+[Chiefs Defeat Chargers 22-6 to Move to 5-0](https://www.chiefs.com/news/chiefs-defeat-chargers-22-6-to-move-to-5-0-on-the-season)
 
-The Transform stage uses spaCy
-with the `en_core_web_sm` English language model.
+### Pipeline Stages
 
-The example calculates token counts,
-unique token counts, type-token ratios,
-and other derived text features.
-
-The Analyze stage produces a token frequency chart
-and a word cloud.
+1. **Extract:** Retrieve the Chiefs article and save its HTML.
+2. **Validate:** Verify the HTML structure and article content.
+3. **Transform:** Extract, clean, and tokenize the text.
+4. **Analyze:** Calculate token frequencies and create charts.
+5. **Load:** Save the processed data and visualizations.
 
 ## Verification
 
-A successful execution displays:
+The customized pipeline executed successfully.
 
-    Pipeline executed successfully!
+The analysis produced:
 
-The pipeline records execution details in a project log.
+- **Raw words:** 655
+- **Article paragraphs:** 17
+- **Cleaned tokens:** 328
+- **Unique tokens:** 227
+- **Type-token ratio:** 0.6921
 
-The following artifacts are created:
+### Generated Files
 
-- `data/raw/case_raw.html` - original HTML document.
-- `data/processed/case_processed.csv` - processed NLP dataset.
-- `data/processed/case_top_tokens.png` - token frequency chart.
-- `data/processed/case_wordcloud.png` - word cloud visualization.
+- `data/raw/chiefs_raw.html`
+- `data/processed/chiefs_processed.csv`
+- `data/processed/chiefs_top_tokens.png`
+- `data/processed/chiefs_wordcloud.png`
 
-These results demonstrate that the pipeline can
-acquire, validate, transform, analyze,
-and persist web text data.
-
-Automated tests provide additional verification
-of the pipeline's expected behavior.
+Automated tests and code-quality checks provide additional
+verification of the pipeline.
 
 ## Interpretation
 
-Natural language processing requires
-more than extracting text from documents.
+The analysis demonstrates how NLP techniques can identify
+recurring vocabulary in a sports article.
 
-Text must be represented in ways
-that support meaningful analysis.
+Token frequencies help reveal which words appear most often,
+while the type-token ratio measures vocabulary diversity.
 
-Token frequencies describe recurring vocabulary,
-while unique token counts and type-token ratios
-provide measures of vocabulary diversity.
+The type-token ratio of approximately 0.69 indicates that
+the cleaned article contains a relatively diverse vocabulary.
 
-Visualizations help reveal dominant terms
-and suggest questions for further investigation.
+The token frequency chart and word cloud provide visual
+representations of the article's vocabulary.
 
-Preprocessing decisions affect these results.
-Removing punctuation, normalizing text,
-and filtering stopwords may reduce noise,
-but can also remove meaningful linguistic information.
-
-These techniques remain relevant
-for inspectable NLP workflows,
-even as modern language models provide
-additional approaches to language understanding.
+These results demonstrate how an automated NLP pipeline
+can transform unstructured sports reporting into
+structured information suitable for analysis.
 
 ## Documentation Index
 
-- **Home** - this landing page
-- [**Project Instructions**](project-instructions.md)
-- [**Glossary**](glossary.md)
-- [**NLP Evolution**](nlp-evolution.md)
+- [Home](index.md)
+- [Project Instructions](project-instructions.md)
+- [Glossary](glossary.md)
+- [NLP Evolution](nlp-evolution.md)
 
 ## Project Links
 
-- [GitHub Repository](https://github.com/denisecase/nlp-06-nlp-pipeline)
-- [Example Pipeline](https://github.com/denisecase/nlp-06-nlp-pipeline/blob/main/src/nlp/pipeline_web_html.py)
-- [Example Configuration](https://github.com/denisecase/nlp-06-nlp-pipeline/blob/main/src/nlp/config.py)
-- [Transform Stage](https://github.com/denisecase/nlp-06-nlp-pipeline/blob/main/src/nlp/stage03_transform.py)
-- [Analyze Stage](https://github.com/denisecase/nlp-06-nlp-pipeline/blob/main/src/nlp/stage04_analyze.py)
+- [GitHub Repository](https://github.com/johnjamez187/nlp-06-nlp-pipeline)
+- [NLP Pipeline](https://github.com/johnjamez187/nlp-06-nlp-pipeline/blob/main/src/nlp/pipeline_web_html.py)
+- [Project Configuration](https://github.com/johnjamez187/nlp-06-nlp-pipeline/blob/main/src/nlp/config.py)
+- [Transform Stage](https://github.com/johnjamez187/nlp-06-nlp-pipeline/blob/main/src/nlp/stage03_transform.py)
+- [Analyze Stage](https://github.com/johnjamez187/nlp-06-nlp-pipeline/blob/main/src/nlp/stage04_analyze.py)
+- [Published Documentation](https://johnjamez187.github.io/nlp-06-nlp-pipeline/)
 
 ## Project Resources
 
