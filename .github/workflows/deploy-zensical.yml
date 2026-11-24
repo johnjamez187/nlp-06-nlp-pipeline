@@ -1,7 +1,7 @@
 # ============================================================
 # .github/workflows/deploy-zensical.yml (ALL-PY-REPOS)
 # ============================================================
-# Updated: 2026-10-11
+# Updated: 2026-11-24
 #
 # WHAT: A GitHub Actions workflow that automatically publishes project documentation.
 #       GitHub Actions is GitHub's built-in project automation service.
@@ -110,6 +110,7 @@ jobs:
       # ============================================================
       # D) DEPLOY: Build and publish docs
       # ============================================================
+
       - name: D1) Build docs with Zensical
         run: |
           if [ ! -f "zensical.toml" ]; then
@@ -136,12 +137,14 @@ jobs:
       - name: D3) Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
+          name: github-pages
           path: site
         # WHY: Packages the built static site for the deploy-pages action.
-        # OBS: path must match the output directory verified in D2.
+        # OBS: Explicit artifact name must match the deployment artifact name.
 
       - name: D4) Deploy to GitHub Pages
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
+        with:
+          artifact_name: github-pages
         # WHY: Publishes the uploaded artifact to GitHub Pages.
-        # OBS: Requires pages: write and id-token: write permissions (set above).
-        # OBS: The deployed URL is shown in the Actions log after this step completes.
+        # OBS: Requires pages: write and id-token: write permissions.
