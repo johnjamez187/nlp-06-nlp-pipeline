@@ -142,6 +142,9 @@ jobs:
         # WHY: Packages the built static site for the deploy-pages action.
         # OBS: Explicit artifact name must match the deployment artifact name.
 
+      - name: D3.1) Wait for artifact availability
+        run: sleep 30
+
       - name: D4) Deploy to GitHub Pages
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
         with:
