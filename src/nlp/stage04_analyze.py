@@ -78,7 +78,7 @@ def _plot_top_tokens(
     """Plot a horizontal bar chart of the top N most frequent tokens.
 
     Args:
-        tokens (list[str]): List of tokens from the cleaned abstract.
+        tokens (list[str]): List of tokens from the cleaned Chiefs article.
         top_n (int): Number of top tokens to display.
         output_path (Path): Path to save the chart image.
         title (str): Chart title.
@@ -126,7 +126,7 @@ def _plot_top_tokens(
     # Adjust layout to prevent clipping of labels and title
     plt.tight_layout()
 
-    # Save the figure to the specified output path with a resolution of 150 DPI.
+    ## Save the figure to the specified output path with a resolution of 300 DPI.
     plt.savefig(output_path, dpi=300)
 
     # After saving, close the figure to free up memory and avoid displaying it in interactive environments.
@@ -178,13 +178,13 @@ def _plot_wordcloud(
     ax.axis("off")
 
     # Set the title of the plot using the provided title argument.
-    ax.set_title(title, fontsize=14)
+    ax.set_title(title, fontsize=16, fontweight="bold")
 
     # Adjust layout to prevent clipping of labels and title
     plt.tight_layout()
 
-    # Save the figure to the specified output path with a resolution of 150 DPI.
-    plt.savefig(output_path, dpi=150)
+    # Save the figure to the specified output path with a resolution of 300 DPI.
+    plt.savefig(output_path, dpi=300)
 
     # After saving, close the figure to free up memory and avoid displaying it in interactive environments.
     plt.close()
