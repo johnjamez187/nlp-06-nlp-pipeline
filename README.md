@@ -189,6 +189,23 @@ Run the complete EVTAL pipeline:
 uv run python -m nlp.pipeline_web_html
 ```
 
+The pipeline automatically generates and saves the word
+frequency chart and word cloud in `data/processed/`.
+
+### View Generated Visualizations
+
+Windows PowerShell users can open the generated
+visualizations using the following commands:
+
+```powershell
+Invoke-Item .\data\processed\chiefs_top_tokens.png
+Invoke-Item .\data\processed\chiefs_wordcloud.png
+```
+
+The visualizations are also available in the
+Data Visualizations section below and on the
+[hosted documentation site](https://johnjamez187.github.io/nlp-06-nlp-pipeline/).
+
 ## Results
 
 The customized pipeline successfully retrieved, validated,
