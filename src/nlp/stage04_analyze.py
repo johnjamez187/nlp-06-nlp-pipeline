@@ -105,22 +105,29 @@ def _plot_top_tokens(
 
     # Use plt.subplots to create a figure and axis object.
     # figsize sets the size of the figure in inches.
-    _, ax = plt.subplots(figsize=(10, 6))
+    _, ax = plt.subplots(figsize=(12, 8))
 
     # barh creates a horizontal bar chart.
     # The y-values are the tokens (words),
     # and the x-values are their corresponding counts (frequencies).
-    ax.barh(list(reversed(words)), list(reversed(counts)), color="steelblue")
+    # Use Kansas City Chiefs team colors.
+    ax.barh(
+        list(reversed(words)),
+        list(reversed(counts)),
+        color="#E31837",
+        edgecolor="#FFB81C",
+    )
 
     # Set labels and title
-    ax.set_xlabel("Frequency")
-    ax.set_title(title)
+    ax.set_xlabel("Word Frequency")
+    ax.set_ylabel("Words")
+    ax.set_title(title, fontsize=16, fontweight="bold")
 
     # Adjust layout to prevent clipping of labels and title
     plt.tight_layout()
 
     # Save the figure to the specified output path with a resolution of 150 DPI.
-    plt.savefig(output_path, dpi=150)
+    plt.savefig(output_path, dpi=300)
 
     # After saving, close the figure to free up memory and avoid displaying it in interactive environments.
     plt.close()
@@ -149,17 +156,16 @@ def _plot_wordcloud(
         LOG.warning("No text available for word cloud.")
         return
 
-    # WordCloud generates the image from a string of space-separated words.
-    # width/height set the image dimensions in pixels.
-    # background_color sets the canvas color.
-    # max_words limits the number of words shown.
+    # Generate a word cloud using Chiefs-inspired colors.
+    # Use the same token frequencies as the bar chart.
     wc = WordCloud(
-        width=800,
-        height=400,
+        width=1200,
+        height=600,
         background_color="white",
-        max_words=80,
-        colormap="viridis",  # or "plasma", "inferno", "magma", etc.
-    ).generate(text)
+        max_words=100,
+        colormap="autumn",
+        random_state=42,
+    ).generate_from_frequencies(Counter(text.split()))
 
     # Use plt.subplots to create a figure and axis object.
     # figsize sets the size of the figure in inches.

@@ -106,3 +106,49 @@ structured information suitable for analysis.
 - [NLP Evolution](nlp-evolution.md)
 - [Professional Python Guide](https://denisecase.github.io/pro-analytics-02/)
 - [Professional Python Project Explainer](https://pup-pack.github.io/professional-python-project-explainer/)
+
+
+## Data Visualizations
+
+### Top 20 Most Frequent Words
+
+![Chiefs Word Frequency Chart](images/chiefs_top_tokens.png)
+
+The frequency chart displays the 20 most common tokens after
+text preprocessing. Kansas, city, chiefs, and defensive were
+the most frequent words, each appearing six times.
+
+The red bars and gold outlines were selected to represent
+the Kansas City Chiefs team colors.
+
+### Word Cloud
+
+![Chiefs Word Cloud](images/chiefs_wordcloud.png)
+
+The word cloud visually represents the frequency of words
+in the cleaned article. Larger words represent more frequently
+occurring tokens.
+
+Football-related terms such as defensive, yards, field,
+and run highlight the article's discussion of game performance.
+
+### Key Insights
+
+- Original article word count: 655
+- Paragraph count: 17
+- Cleaned token count: 328
+- Unique token count: 227
+- Vocabulary diversity: 69.21%
+- Characters removed during preprocessing: 41.5%
+
+The visualizations suggest that defensive performance was
+an important theme in the article.
+
+### Project Verification
+
+- Ruff linting: Passed
+- Ruff formatting: Passed
+- Type checking: Passed
+- Pytest: 1 passed
+- Total code coverage: 82.44%
+- EVTAL pipeline: Successfully executed
